@@ -15,9 +15,9 @@ struct is_figure : std::false_type {};
 template <typename T>
 struct is_figure<T, std::void_t<
                     decltype(std::declval<const T&>().Print(std::cout)),
-                    decltype(std::declval<const T&>().Area()),
-                    decltype(std::declval<const T&>().Center()),
-                    decltype(std::declval<T&>().Scan(std::cin))>> : std::true_type {};
+        decltype(std::declval<const T&>().Area()),
+        decltype(std::declval<const T&>().Center()),
+        decltype(std::declval<T&>().Scan(std::cin))>> : std::true_type {};
 
 template <typename T>
 std::enable_if<is_figure<T>::value, double> area(const T& figure) {
@@ -36,7 +36,7 @@ std::enable_if<is_figure<T>::value, std::ostream&> operator << (std::ostream& os
 }
 
 template <typename T, typename ScanReturnType = decltype(std::declval<T&>().Scan(std::cin))>
-std::istream& operator >> (std::istream& is, T& figure) {
+std::enable_if<is_figure<T>::value, std::istream&> operator >> (std::istream& is, T& figure) {
     figure.Scan(is);
     return is;
 }
@@ -46,7 +46,7 @@ struct is_figurelike_tuple : std::false_type {};
 
 template<class Head, class... Tail>
 struct is_figurelike_tuple<std::tuple<Head, Tail...>> :
-        std::conjunction<is_point<Head>, std::is_same<Head, Tail>...> {};
+std::conjunction<is_point<Head>, std::is_same<Head, Tail>...> {};
 
 template<size_t Id, class T>
 double compute_area(const T& tuple) {
