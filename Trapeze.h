@@ -7,6 +7,7 @@
 template <typename T>
 class Trapeze {
 public:
+    using point_type = T;
     Trapeze() = default;
     Trapeze(Point<T> p1, Point<T> p2, Point<T> p3, Point<T> p4);
     void Print(std::ostream& os) const;

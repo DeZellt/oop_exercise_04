@@ -6,6 +6,7 @@
 template <typename T>
 class Square {
 public:
+  using point_type = T;
     Square() = default;
     Square(Point<T> p1, Point<T> p2, Point<T> p3, Point<T> p4);
     Point<T> Center() const;

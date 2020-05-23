@@ -5,6 +5,7 @@
 template <typename T>
 class Rectangle {
 public:
+    using point_type = T;
     Rectangle() = default;
     Rectangle(Point<T> p1, Point<T> p2, Point<T> p3, Point<T> p4);
     Point<T> Center() const;

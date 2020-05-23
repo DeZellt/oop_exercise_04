@@ -13,30 +13,29 @@ template <typename T, typename = void>
 struct is_figure : std::false_type {};
 
 template <typename T>
-struct is_figure<T, std::void_t<
-                    decltype(std::declval<const T&>().Print(std::cout)),
-        decltype(std::declval<const T&>().Area()),
+struct is_figure<T, std::void_t<decltype(std::declval<const T&>().Area()),
         decltype(std::declval<const T&>().Center()),
+        decltype(std::declval<const T&>().Print(std::cout)),
         decltype(std::declval<T&>().Scan(std::cin))>> : std::true_type {};
 
 template <typename T>
-std::enable_if<is_figure<T>::value, double> area(const T& figure) {
+typename std::enable_if<is_figure<T>::value, double>::type area(const T& figure) {
     return figure.Area();
 }
 
 template <typename T>
-std::enable_if<is_figure<T>::value, double> center(const T& figure) {
+typename std::enable_if<is_figure<T>::value, Point<typename T::point_type>>::type center(const T& figure) {
     return figure.Center();
 }
 
-template <typename T, typename PrintReturnType = decltype(std::declval<const T&>().Print(std::cout))>
-std::enable_if<is_figure<T>::value, std::ostream&> operator << (std::ostream& os, const T& figure) {
+template <typename T> //вывод для классов с функцией Prints
+typename std::enable_if<is_figure<T>::value, std::ostream&>::type operator << (std::ostream& os, const T& figure) {
     figure.Print(os);
     return os;
 }
 
-template <typename T, typename ScanReturnType = decltype(std::declval<T&>().Scan(std::cin))>
-std::enable_if<is_figure<T>::value, std::istream&> operator >> (std::istream& is, T& figure) {
+template <typename T> //вывод для классов с функцией Print
+typename std::enable_if<is_figure<T>::value, std::istream&>::type operator >> (std::istream& is, T& figure) {
     figure.Scan(is);
     return is;
 }
@@ -45,8 +44,8 @@ template<class T>
 struct is_figurelike_tuple : std::false_type {};
 
 template<class Head, class... Tail>
-struct is_figurelike_tuple<std::tuple<Head, Tail...>> :
-std::conjunction<is_point<Head>, std::is_same<Head, Tail>...> {};
+struct is_figurelike_tuple<std::tuple<Head, Tail...>> : //проверяет, является ли T кортежом, из которых можно составить фигуру
+        std::conjunction<is_point<Head>, std::is_same<Head, Tail>...> {};
 
 template<size_t Id, class T>
 double compute_area(const T& tuple) {
